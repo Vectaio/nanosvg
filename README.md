@@ -6,9 +6,11 @@ SVG files compression tool for Nano. More information in [Nano](https://vecta.io
 
 `npm install nanosvg`
 
-## Usage
+## Authentication
 
 Obtain API Key in [Nano](https://vecta.io/nano)
+
+## Usage
 
 ```javascript
 var Nano = require('nanosvg'),
