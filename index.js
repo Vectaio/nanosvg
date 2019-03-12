@@ -10,11 +10,39 @@ var CWD = process.cwd(),
     URL = 'http://localhost:5000/sizzling-heat-5814/us-central1/nano',
     nano;
 
+/**
+ * SVG file object
+ * @typedef {object} File
+ * @property {string} string SVG in string format
+ * @property {number} [size] Size of SVG
+ * @property {number} [mode=0] Compression mode
+ */
+
+/**
+ * Nano client constructor
+ * @param {object} opts Options to initialize Nano
+ * @param {string} opts.key API key to initialize Nano
+ * @param {number} [opts.mode=0] Compression mode for Nano. Can be 0 = image mode or 1 = object mode
+ * @namespace
+ */
 function Nano(opts) {
     this.key = opts.key;
     this.mode = opts.mode || 0;
 }
 
+/**
+ * Compress a SVG in string format and returns compress SVG in string format
+ * @memberOf Nano
+ * @param {string|File} file Can be either a string representing a SVG or an object with said string with size
+ * @returns {Promise<File>}
+ * @example
+ * var Nano = require('nanosvg'),
+ *     nano = new Nano({ key: <YOUR API KEY> });
+ *
+ *     compress('<svg>...</svg>').then(function(res){
+ *         console.log(res); // { str: '<svg>...</svg>', size: ... }
+ *     });
+ */
 Nano.prototype.compress =  function(file) {
     var me = this,
         obj = {};
@@ -58,6 +86,23 @@ Nano.prototype.compress =  function(file) {
     });
 };
 
+/**
+ * Compress svg(s) from a directory and output to a target directory
+ * @memberOf Nano
+ * @param {string} src Glob pattern representing source files.
+ * @param {string} tgt Glob pattern representing target directory.
+ * @example
+ * var Nano = require('nanosvg'),
+ *     nano = new Nano({ key: <YOUR API KEY> });
+ *
+ *     nano.compressFiles('./uncompressed/*.svg', './compressed/');
+ *     // Compressed: 0.svg, 0/2
+ *     //  Savings: 38.87%
+ *     // Compressed: 1.svg, 1/2
+ *     //  Savings: 70.32%
+ *     // Compressed: 2.svg, 2/2
+ *     //  Savings: 69.99%
+ */
 Nano.prototype.compressFiles = function(src, tgt) {
     var me = this;
 
