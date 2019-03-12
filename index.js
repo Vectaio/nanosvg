@@ -7,7 +7,7 @@ var CWD = process.cwd(),
     _glob = require('glob-promise'),
     _request = require('request'),
     args = require('minimist')(process.argv.slice(2)),
-    URL = 'http://localhost:5000/sizzling-heat-5814/us-central1/nano',
+    URL = 'https://api.vecta.io/nano',
     nano;
 
 /**
