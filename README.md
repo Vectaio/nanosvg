@@ -17,6 +17,15 @@ var Nano = require('nanosvg'),
 // compress in bulk
 nano.compressFiles('./*.svg', './compressed/');
 ```
+## Usage on CLI
+
+### Install
+
+`npm i -g nanosvg`
+
+### Compress files
+
+`nanosvg --key <YOUR API KEY> ./*.svg ./compressed/`
 
 ## API
 
