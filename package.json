@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "SVG files compression tool for Nano. More information in [Nano](https://vecta.io/nano)",
   "main": "index.js",
-  "scripts": {
-    "docs": "jsdoc2md --template README.hbs index.js > README.md"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vecta-io/nanosvg.git"
@@ -22,8 +19,5 @@
     "glob-promise": "^3.4.0",
     "minimist": "^1.2.0",
     "request": "^2.88.0"
-  },
-  "devDependencies": {
-    "jsdoc-to-markdown": "^4.0.1"
   }
 }

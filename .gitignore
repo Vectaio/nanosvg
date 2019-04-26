@@ -86,3 +86,6 @@ package-lock.json
 # Test
 test.js
 test/
+
+#IDE
+.idea/
