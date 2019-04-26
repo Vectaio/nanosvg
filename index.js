@@ -70,7 +70,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
                 if (stats.isFile()) {
                     file.name = _path.basename(src);
                     file.size = stats.size;
-                    file.mode = opts.mode || []; //0 === IMG mode, 1 === OBJ mode
+                    file.mode = opts.mode || 0; //0 === IMG mode, 1 === OBJ mode
 
                     _fs.readFile(src, 'utf8').then(function (str) {
                         file.str = str;
