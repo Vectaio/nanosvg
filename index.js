@@ -1,4 +1,4 @@
-/* global Promise, require, process, console */
+/* global Promise, require, process, console, module */
 "use strict";
 
 var CWD = process.cwd(),
