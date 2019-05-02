@@ -6,9 +6,7 @@ var CWD = process.cwd(),
     _path = require('path'),
     _glob = require('glob-promise'),
     _request = require('request'),
-    args = require('minimist')(process.argv.slice(2)),
-    URL = 'https://api.vecta.io/nano',
-    nano;
+    URL = 'https://api.vecta.io/nano';
 
 function Nano(opts) {
     this.key = opts.key;

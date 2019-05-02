@@ -2,6 +2,7 @@
 'use strict';
 
 var Nano = require('../index'),
+    args = require('minimist')(process.argv.slice(2)),
     nano;
 
 if (args._.length < 2) { console.log('Usage: nanosvg [options] input output'); }
