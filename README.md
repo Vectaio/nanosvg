@@ -14,10 +14,15 @@ Obtain API Key in [Nano](https://vecta.io/nano)
 
 ```javascript
 var Nano = require('nanosvg'),
-    nano = new Nano({ key: <YOUR API KEY> });
+    nano = new Nano({ 
+                key: <YOUR API KEY>,
+                mode: <COMPRESSION MODE> // image mode = 0, object mode = 1
+            });
 
 // compress in bulk
-nano.compress('./*.svg', './compressed/');
+nano.compress('./*.svg', './compressed/').then(function () {
+    console.log('Compression done');
+});
 ```
 ## Usage on CLI
 
@@ -27,7 +32,7 @@ nano.compress('./*.svg', './compressed/');
 
 ### Compress files
 
-`nanosvg --key <YOUR API KEY> ./*.svg ./compressed/`
+`nanosvg ./*.svg ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
 
 ## License
 

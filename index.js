@@ -16,10 +16,14 @@ function Nano(opts) {
 }
 
 Nano.prototype.compress = function (src, tgt, opts) {
-    _glob(src).then(function (files) {
+    opts = opts || {};
+    opts.key = this.key;
+    opts.mode = this.mode || 0; //0 === IMG mode, 1 === OBJ mode
+
+    return _glob(src).then(function (files) {
         if (files.length === 0) { console.error("No files found"); }
 
-        compressBatch(files, tgt, opts);
+        return compressBatch(files, tgt, opts);
     });
 
     function compressBatch(files, tgt, opts) {
@@ -44,6 +48,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
                             ' ' + (file.old_size / 1024).toFixed(1) + 'KB -> ' + (file.size /1024).toFixed(1) + 'KB' +
                             ' ' + (((file.old_size - file.size) / file.old_size) * 100).toFixed(2) + '% saved');
 
+                        return;
                     }).catch(function (err) {
                         opts._index++;
                         console.error('Compression failed (' + err.name + ') : ', err.msg);
@@ -55,10 +60,14 @@ Nano.prototype.compress = function (src, tgt, opts) {
 
         files.splice(0, LIMIT);
 
-        Promise.all(tasks).then(function () {
+        return Promise.all(tasks).then(function () {
             if (files.length > 0) {
-                compressBatch(files, tgt, opts);
+                return compressBatch(files, tgt, opts);
             }
+            else { return; }
+        }).catch(function (err) {
+            console.error(err);
+            return;
         });
     }
 
@@ -70,7 +79,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
                 if (stats.isFile()) {
                     file.name = _path.basename(src);
                     file.size = stats.size;
-                    file.mode = opts.mode || 0; //0 === IMG mode, 1 === OBJ mode
+                    file.mode = opts.mode || 0;
 
                     _fs.readFile(src, 'utf8').then(function (str) {
                         file.str = str;
@@ -107,10 +116,13 @@ Nano.prototype.compress = function (src, tgt, opts) {
     }
 };
 
-if (args._.length < 2) { console.log('Usage: nanofy [options] input output'); }
-else {
-    nano = new Nano(args);
-    nano.compress(args._[0], args._[1], args);
+//called on CLI
+if (require.main === module) {
+    if (args._.length < 2) { console.log('Usage: nanosvg [options] input output'); }
+    else {
+        nano = new Nano(args);
+        nano.compress(args._[0], args._[1], args);
+    }
 }
 
 module.exports = Nano;
