@@ -9,7 +9,8 @@ var CWD = process.cwd(),
     URL = 'https://api.vecta.io/nano';
 
 function Nano(opts) {
-    this.key = opts.key;
+    opts = opts || {};
+    this.key = opts.key || null;
     this.mode = opts.mode || 0;
 }
 
