@@ -118,13 +118,4 @@ function compressFile(src, tgt, opts) {
     });
 }
 
-//called on CLI
-if (require.main === module) {
-    if (args._.length < 2) { console.log('Usage: nanosvg [options] input output'); }
-    else {
-        nano = new Nano(args);
-        nano.compress(args._[0], args._[1], args);
-    }
-}
-
 module.exports = Nano;
