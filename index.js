@@ -15,8 +15,8 @@ function Nano(opts) {
 
 Nano.prototype.compress = function (src, tgt, opts) {
     opts = opts || {};
-    opts.key = this.key;
-    opts.mode = this.mode || 0; //0 === IMG mode, 1 === OBJ mode
+    opts.key = opts.key || this.key;
+    opts.mode = opts.mode || this.mode || 0; //0 === IMG mode, 1 === OBJ mode
 
     return _glob(src).then(function (files) {
         if (files.length === 0) { console.error("No files found"); }
@@ -96,6 +96,10 @@ Nano.prototype.compress = function (src, tgt, opts) {
 Nano.prototype.compressString = compressString;
 
 function compressString(file, opts) {
+    opts = opts || {};
+    opts.key = opts.key || this.key;
+    opts.mode = opts.mode || this.mode || 0; //0 === IMG mode, 1 === OBJ mode
+
     return new Promise(function (resolve, reject) {
         _request({
             method: 'POST',
