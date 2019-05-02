@@ -68,50 +68,56 @@ Nano.prototype.compress = function (src, tgt, opts) {
             return;
         });
     }
+
+    function compressFile(src, tgt, opts) {
+        return new Promise(function (resolve, reject) {
+            _fs.stat(src).then(function (stats) {
+                var file = {};
+
+                if (stats.isFile()) {
+                    file.name = _path.basename(src);
+                    file.size = stats.size;
+                    file.mode = opts.mode || 0;
+
+                    _fs.readFile(src, 'utf8').then(function (str) {
+                        file.str = str;
+
+                        compressString(file, opts).then(resolve).catch(reject);
+                    }).catch(function (err) {
+                        reject(err);
+                    });
+                }
+                else { reject({ msg: 'Not a valid SVG file.' }) }
+            });
+        });
+    }
 };
 
-Nano.prototype.compressFile = compressFile;
+Nano.prototype.compressString = compressString;
 
-function compressFile(src, tgt, opts) {
+function compressString(file, opts) {
     return new Promise(function (resolve, reject) {
-        _fs.stat(src).then(function (stats) {
-            var file = {};
-
-            if (stats.isFile()) {
-                file.name = _path.basename(src);
-                file.size = stats.size;
-                file.mode = opts.mode || 0;
-
-                _fs.readFile(src, 'utf8').then(function (str) {
-                    file.str = str;
-
-                    _request({
-                        method: 'POST',
-                        url: URL,
-                        headers: {
-                            'content-type': 'application/json',
-                            'x-api-key': opts.key
-                        },
-                        body: { file: file },
-                        json: true
-                    }, function (err, res, body) {
-                        if (err) { reject(err); }
-                        else {
-                            if (res.statusCode !== 200) {
-                                reject({ msg: res.body.error, name: file.name });
-                            }
-                            else {
-                                body.name = file.name;
-                                body.old_size = file.size;
-                                resolve(body);
-                            }
-                        }
-                    });
-                }).catch(function (err) {
-                    reject(err);
-                });
+        _request({
+            method: 'POST',
+            url: URL,
+            headers: {
+                'content-type': 'application/json',
+                'x-api-key': opts.key
+            },
+            body: { file: file },
+            json: true
+        }, function (err, res, body) {
+            if (err) { reject(err); }
+            else {
+                if (res.statusCode !== 200) {
+                    reject({ msg: res.body.error, name: file.name });
+                }
+                else {
+                    body.name = file.name;
+                    body.old_size = file.size;
+                    resolve(body);
+                }
             }
-            else { reject({ msg: 'Not a valid SVG file.' }) }
         });
     });
 }
