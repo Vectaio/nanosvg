@@ -1,6 +1,6 @@
 {
   "name": "nanosvg",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SVG files compression tool for Nano. More information in [Nano](https://vecta.io/nano)",
   "main": "index.js",
   "repository": {
@@ -9,6 +9,9 @@
   },
   "bugs": {
     "url": "https://github.com/vecta-io/nanosvg/issues"
+  },
+  "bin": {
+    "nanosvg": "./bin/cli.js"
   },
   "homepage": "https://vecta.io/nano",
   "author": "Thomas Yip",
