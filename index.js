@@ -85,6 +85,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
 
                         compressString(file, opts).then(resolve).catch(reject);
                     }).catch(function (err) {
+                        console.error(err);
                         reject(err);
                     });
                 }
@@ -97,10 +98,6 @@ Nano.prototype.compress = function (src, tgt, opts) {
 Nano.prototype.compressString = compressString;
 
 function compressString(file, opts) {
-    opts = opts || {};
-    opts.key = opts.key || this.key;
-    opts.mode = opts.mode || this.mode || 0; //0 === IMG mode, 1 === OBJ mode
-
     return new Promise(function (resolve, reject) {
         _request({
             method: 'POST',
