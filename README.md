@@ -16,7 +16,7 @@ Obtain API Key in [Nano](https://vecta.io/nano)
 var Nano = require('nanosvg'),
     nano = new Nano({ 
                 key: <YOUR API KEY>,
-                mode: <COMPRESSION MODE> // image mode = 0, object mode = 1
+                mode: <COMPRESSION MODE> // image mode = 0 [default], object mode = 1
             });
 
 // compress in bulk
