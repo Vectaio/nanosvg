@@ -43,7 +43,8 @@ Nano.prototype.compress = function (src, tgt, opts) {
                     stat = file.stat;
                     obj.name = _path.basename(file.path);
                     obj.size = stat.size;
-                    obj.mode = opts.mode || 0;
+                    obj.mode = opts.mode;
+                    obj.precision = opts.precision;
                     obj.str = file.contents.toString('utf8');
 
                     compressString(obj, opts).then(function (file) {
