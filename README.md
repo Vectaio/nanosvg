@@ -34,6 +34,15 @@ nano.compress('./*.svg', './compressed/').then(function () {
 
 `nanosvg ./*.svg ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
 
+### Options
+
+`key <string>`
+- API key obtained from [Nano](https://vecta.io/nano)
+
+`mode <number>`
+- 0 = image mode [default]
+- 1 = object mode
+
 ## License
 
 This software is licensed under the MIT License. [View the license](LICENSE).

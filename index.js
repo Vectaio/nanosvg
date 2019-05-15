@@ -2,9 +2,10 @@
 "use strict";
 
 var CWD = process.cwd(),
-    _fs = require('fs-extra'),
     _path = require('path'),
-    _glob = require('glob-promise'),
+    _vfs = require('vinyl-fs'),
+    _vinyl = require('vinyl'),
+    _through = require('through2-concurrent'),
     _request = require('request'),
     URL = 'https://api.vecta.io/nano';
 
@@ -12,87 +13,63 @@ function Nano(opts) {
     opts = opts || {};
     this.key = opts.key || null;
     this.mode = opts.mode || 0;
+    this.precision = opts.precision || 3;
 }
 
 Nano.prototype.compress = function (src, tgt, opts) {
-    opts = opts || {};
-    opts.key = opts.key || this.key;
-    opts.mode = opts.mode || this.mode || 0; //0 === IMG mode, 1 === OBJ mode
+    var me = this,
+        defs = {
+            key: me.key,
+            mode: me.mode,
+            precision: me.precision
+        },
+        stream;
 
-    return _glob(src).then(function (files) {
-        if (files.length === 0) { console.error("No files found"); }
+    opts = Object.assign(defs, opts || {});
 
-        return compressBatch(files, tgt, opts);
-    });
+    if (defs.key) {
+        stream = _vfs.src(src)
+            .pipe(_through.obj({ maxConcurrency: 4 }, function (file, enc, next) {
+                var obj = {},
+                    me = this,
+                    stat,
+                    newFile =  new _vinyl(file); //create a new file
 
-    function compressBatch(files, tgt, opts) {
-        var LIMIT = 100,
-            i = 0,
-            tasks = [];
+                if (file.isNull() || file.isStream() || enc !== 'utf8' || _path.extname(file.path).toLowerCase() !== '.svg') {
+                    console.error(_path.basename(file.path), ': not a valid SVG file.');
+                    return next(null, file);
+                }
+                if (file.isBuffer()) {
+                    stat = file.stat;
+                    obj.name = _path.basename(file.path);
+                    obj.size = stat.size;
+                    obj.mode = opts.mode || 0;
+                    obj.str = file.contents.toString('utf8');
 
-        opts = opts || {};
-        opts._total = opts._total || files.length;
-        opts._index = opts._index || 0;
-
-        for (; i < LIMIT; i++) {
-            if (files[i]) {
-                tasks.push(
-                    compressFile(files[i], tgt, opts).then(function (file) {
-                        opts._index++;
-
-                        _fs.outputFileSync(_path.join(CWD, tgt, file.name), file.str);
-
+                    compressString(obj, opts).then(function (file) {
                         console.log('Compressed: ' + file.name + ' ' + //eslint-disable-line no-console
-                            opts._index + '/' + opts._total +
                             ' ' + (file.old_size / 1024).toFixed(1) + 'KB -> ' + (file.size /1024).toFixed(1) + 'KB' +
                             ' ' + (((file.old_size - file.size) / file.old_size) * 100).toFixed(2) + '% saved');
 
-                        return;
-                    }).catch(function (err) {
-                        opts._index++;
-                        console.error('Compression failed (' + err.name + ') : ', err.msg);
-                        return;
-                    })
-                );
-            }
-        }
-
-        files.splice(0, LIMIT);
-
-        return Promise.all(tasks).then(function () {
-            if (files.length > 0) {
-                return compressBatch(files, tgt, opts);
-            }
-            else { return; }
-        }).catch(function (err) {
-            console.error(err);
-            return;
-        });
-    }
-
-    function compressFile(src, tgt, opts) {
-        return new Promise(function (resolve, reject) {
-            _fs.stat(src).then(function (stats) {
-                var file = {};
-
-                if (stats.isFile()) {
-                    file.name = _path.basename(src);
-                    file.size = stats.size;
-                    file.mode = opts.mode || 0;
-
-                    _fs.readFile(src, 'utf8').then(function (str) {
-                        file.str = str;
-
-                        compressString(file, opts).then(resolve).catch(reject);
+                        newFile.contents = Buffer.from(file.str, 'utf8');
+                        me.push(newFile);
+                        next();
                     }).catch(function (err) {
                         console.error(err);
-                        reject(err);
+                        next();
                     });
                 }
-                else { reject({ msg: 'Not a valid SVG file.' }) }
+            }))
+            .pipe(_vfs.dest(tgt));
+
+        return new Promise(function (resolve) {
+            stream.on('finish', function() {
+                stream.destroy();
+                resolve();
             });
         });
     }
+    else { return Promise.reject('No API key provided'); }
 };
 
 Nano.prototype.compressString = compressString;
