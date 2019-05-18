@@ -15,8 +15,8 @@ Obtain API Key in [Nano](https://vecta.io/nano)
 ```javascript
 var Nano = require('nanosvg'),
     nano = new Nano({ 
-                key: <YOUR API KEY>,
-                mode: <COMPRESSION MODE> // image mode = 0 [default], object mode = 1
+                key: 'YOUR API KEY',
+                mode: 'COMPRESSION MODE' // image mode = 0 [default], object mode = 1
             });
 
 // compress in bulk
@@ -33,11 +33,11 @@ nano.compress('./*.svg', './compressed/').then(function () {
 ### Compress files
 
 #### Compress single file
-`nanosvg ./to-compress.svg ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
+`nanosvg ./to-compress.svg ./compressed/ --key 'YOUR API KEY' --mode 'COMPRESSION MODE'`
 
 #### Compress using glob
 
-`nanosvg "./*.svg" ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
+`nanosvg "./*.svg" ./compressed/ --key 'YOUR API KEY' --mode 'COMPRESSION MODE'`
 
 ### Options
 
