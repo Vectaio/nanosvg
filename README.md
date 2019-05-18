@@ -32,7 +32,7 @@ nano.compress('./*.svg', './compressed/').then(function () {
 
 ### Compress files
 
-`nanosvg ./*.svg ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
+`nanosvg "./*.svg" ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
 
 ### Options
 
