@@ -1,8 +1,7 @@
 /* global Promise, require, process, console, module */
 "use strict";
 
-var CWD = process.cwd(),
-    _path = require('path'),
+var _path = require('path'),
     _vfs = require('vinyl-fs'),
     _vinyl = require('vinyl'),
     _through = require('through2-concurrent'),
