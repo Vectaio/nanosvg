@@ -1,5 +1,7 @@
 ![Nano](logo.png)
 
+[![npm version](https://badge.fury.io/js/nanosvg.svg)](https://badge.fury.io/js/nanosvg)
+
 SVG files compression tool for Nano. For more information, visit [Nano](https://vecta.io/nano)
 
 ## Installation
