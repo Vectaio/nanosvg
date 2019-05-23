@@ -46,7 +46,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
                     obj.precision = opts.precision;
                     obj.str = file.contents.toString('utf8');
 
-                    compressString(obj, opts).then(function (file) {
+                    compressString(obj, opts, 2).then(function (file) {
                         console.log('Compressed: ' + file.name + ' ' + //eslint-disable-line no-console
                             ' ' + (file.old_size / 1024).toFixed(1) + 'KB -> ' + (file.size /1024).toFixed(1) + 'KB' +
                             ' ' + (((file.old_size - file.size) / file.old_size) * 100).toFixed(2) + '% saved');
@@ -74,7 +74,7 @@ Nano.prototype.compress = function (src, tgt, opts) {
 
 Nano.prototype.compressString = compressString;
 
-function compressString(file, opts) {
+function compressString(file, opts, retry) {
     return new Promise(function (resolve, reject) {
         _request({
             method: 'POST',
@@ -86,10 +86,19 @@ function compressString(file, opts) {
             body: { file: file },
             json: true
         }, function (err, res, body) {
-            if (err) { reject(err); }
+            if (err) {
+                if (err.code === 'ETIMEDOUT') {
+                    if (retry === 0) { reject({ msg: 'Unable to compress', name: file.name }); }
+                    else {
+                        retry -= 1;
+                        compressString(file, opts, retry).then(resolve).catch(reject);
+                    }
+                }
+                else { reject(err); }
+            }
             else {
                 if (res.statusCode !== 200) {
-                    reject({ msg: res.body.error, name: file.name });
+                    reject({ msg: res.body.error || res.body.message, name: file.name });
                 }
                 else {
                     body.name = file.name;
