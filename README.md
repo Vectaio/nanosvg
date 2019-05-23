@@ -18,7 +18,7 @@ Obtain API Key in [Nano](https://vecta.io/nano)
 var Nano = require('nanosvg'),
     nano = new Nano({ 
                 key: 'YOUR API KEY',
-                mode: 'COMPRESSION MODE' // image mode = 0 [default], object mode = 1
+                embed_fonts: 1, // fonts embedding. 0 or 1. Default is 1
             });
 
 // compress in bulk
@@ -35,11 +35,11 @@ nano.compress('./*.svg', './compressed/').then(function () {
 ### Compress files
 
 #### Compress single file
-`nanosvg ./to-compress.svg ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
+`nanosvg ./to-compress.svg ./compressed/ --key <YOUR API KEY> --embed_fonts 1`
 
 #### Compress using glob
 
-`nanosvg "./*.svg" ./compressed/ --key <YOUR API KEY> --mode <COMPRESSION MODE>`
+`nanosvg "./*.svg" ./compressed/ --key <YOUR API KEY> --embed_fonts 1`
 
 ### Options
 
@@ -47,15 +47,51 @@ nano.compress('./*.svg', './compressed/').then(function () {
 
 - API key obtained from [Nano](https://vecta.io/nano)
 
-`mode <number>` 
-
-- 0 = image mode [default] (with font embedding)
-- 1 = object mode (without font embedding)
-
-`precision <number>`
+`precision=3 <number>`
 
 - Precision of numerical values in SVG.
-- 3 [default]
+
+`embed_fonts=1 <number|boolean>`
+
+- Fonts embedding in SVG. Useful when svg is referenced using <img>. Defaults to `1` or `true`
+
+`maintain_class=0 <number|boolean>`
+
+- Maintain class name of SVG elements. Defaults to `0` or `false`
+- Example:
+
+```html
+<!--Before-->
+<svg>
+    <rect class="Fill" x="0" y="0" width="100" height="100"></rect>
+</svg>
+
+<!--After-->
+<svg>
+    <path class="Fill" d="M 0 0 L 100 100" />
+</svg>
+```
+
+`maintain_id=0 <number|boolean>`
+
+- Maintain id of SVG elements. Defaults to `0` or `false`
+- Example:
+
+```html
+<!--Before-->
+<svg>
+    <rect id="rect1" x="0" y="0" width="100" height="100"></rect>
+</svg>
+
+<!--After-->
+<svg>
+    <path id="rect1" d="M 0 0 L 100 100" />
+</svg>
+```
+
+`maintain_structure=0 <number|boolean>`
+
+- Maintain structure of SVG elements. Defaults to `0` or `false`
 
 ## License
 

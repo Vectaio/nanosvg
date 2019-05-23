@@ -9,24 +9,16 @@ var _path = require('path'),
     URL = 'https://api.vecta.io/nano';
 
 function Nano(opts) {
-    opts = opts || {};
-    this.key = opts.key || null;
-    this.mode = opts.mode || 0;
-    this.precision = opts.precision || 3;
+    this.defs = opts || {};
 }
 
 Nano.prototype.compress = function (src, tgt, opts) {
-    var me = this,
-        defs = {
-            key: me.key,
-            mode: me.mode,
-            precision: me.precision
-        },
-        stream;
+    var stream;
 
-    opts = Object.assign(defs, opts || {});
+    //override default options if needed
+    opts = Object.assign(this.defs, opts || {});
 
-    if (defs.key) {
+    if (this.defs.key) {
         stream = _vfs.src(src)
             .pipe(_through.obj({ maxConcurrency: 4 }, function (file, enc, next) {
                 var obj = {},
@@ -42,8 +34,6 @@ Nano.prototype.compress = function (src, tgt, opts) {
                     stat = file.stat;
                     obj.name = _path.basename(file.path);
                     obj.size = stat.size;
-                    obj.mode = opts.mode;
-                    obj.precision = opts.precision;
                     obj.str = file.contents.toString('utf8');
 
                     compressString(obj, opts, 2).then(function (file) {
@@ -76,6 +66,7 @@ Nano.prototype.compressString = compressString;
 
 function compressString(file, opts, retry) {
     return new Promise(function (resolve, reject) {
+        Object.assign(file, opts || {}); //copy over options
         _request({
             method: 'POST',
             url: URL,
@@ -88,7 +79,7 @@ function compressString(file, opts, retry) {
         }, function (err, res, body) {
             if (err) {
                 if (err.code === 'ETIMEDOUT') {
-                    if (retry === 0) { reject({ msg: 'Unable to compress', name: file.name }); }
+                    if (retry === 0 || retry === undefined) { reject({ msg: 'Unable to compress', name: file.name }); }
                     else {
                         retry -= 1;
                         compressString(file, opts, retry).then(resolve).catch(reject);
