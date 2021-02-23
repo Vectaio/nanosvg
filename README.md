@@ -1,3 +1,5 @@
+## This project has been deprecated. Please visit [Nano](https://vecta.io/nano) for more information
+
 ![Nano](logo.png)
 
 [![npm version](https://badge.fury.io/js/nanosvg.svg)](https://badge.fury.io/js/nanosvg)
